@@ -1,0 +1,67 @@
+---
+title: "Try1"
+author: "Kanyan Chen"
+date: "2019¦~9¤ë12¤é"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load libraries, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(tidytext)
+library(plotly)
+library(DT)
+library(tm)
+library(data.table)
+library(scales)
+library(wordcloud2)
+library(gridExtra)
+library(ngram)
+library(shiny) 
+library(ggplot2)
+```
+
+```{r}
+# load lyrics data
+load('output/processed_lyrics.RData') 
+# load artist information
+dt_artist <- fread('data/artists.csv') 
+```
+
+```{r}
+dt_lyrics = dt_lyrics[dt_lyrics$year>=1968,]
+```
+
+```{r warning=FALSE}
+bing = get_sentiments("bing")
+affin = get_sentiments("afinn")
+
+n = dim(dt_lyrics)[1]
+
+dt_lyrics$affin.mean = rep(0,n)
+dt_lyrics$affin.count = rep(0,n)
+
+dt_lyrics$bing.mean = rep(0,n)
+dt_lyrics$bing.count = rep(0,n)
+
+for(i in 1:n){
+  if(i%%100==0){
+    print(i%/%100)
+  }
+  a = unlist(strsplit(dt_lyrics[i,"stemmedwords"][[1]]," ")[[1]])
+  A = data.frame(word=a)
+  affin.v = (A%>%inner_join(affin,"word"))$value
+  dt_lyrics$affin.mean[i] = mean(affin.v)
+  dt_lyrics$affin.count[i] = length(affin.v)
+  bing.v = (A%>%inner_join(bing,"word"))$sentiment
+  dt_lyrics$bing.mean[i] = mean(bing.v=="positive")
+  dt_lyrics$bing.count[i] = length(bing.v)
+}
+```
+
+```{r}
+save(dt_lyrics, file="output/processed1_lyrics.RData")
+```
