@@ -9,7 +9,7 @@ This is the first and only *individual* (as opposed to *team*) this semester.
 
 Term: Fall 2019
 
-+ Projec title: Lorem ipsum dolor sit amet
++ Projec title: EDA: sentimental words in lyrics
 + This project is conducted by Kanyan Chen
 
 + Project summary: Analyze the amount, frequency, and positive/negative of sentimental words in lyrics.
