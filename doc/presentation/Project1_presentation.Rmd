@@ -1,7 +1,7 @@
 ---
 title: "Project 1"
 author: "Kanyan Chen kc3207"
-date: "09/18/19"
+date: "09/19/19"
 output: ioslides_presentation
 runtime: shiny
 ---
@@ -20,21 +20,36 @@ load('../../output/processed1_lyrics.RData')
 ![](title2.jpg)
 
 
-##Amount1
+##average amount of sentimental words
 ```{r}
 dt.amount = data.frame(affin = tapply(dt_lyrics$affin.count, dt_lyrics$genre, mean),
 bing = tapply(dt_lyrics$bing.count, dt_lyrics$genre, mean),
 nrc = tapply(dt_lyrics$nrc.count, dt_lyrics$genre, mean))
 dt.amount
 ```
+AFFIN(from Finn Arup Nielsen): 2477 words
+
+Bing(from Bing Liu and collaborators): 6786 words
+
+NRC(from Saif Mohammad and Petet Turney): 13901 words
 
 
-##Amount2
+##density of amount
 ```{r, echo = FALSE,warning=FALSE}
 shinyAppDir("../shiny/shiny_amount",options=list(width="100%"))
 ```
 
-##Frequency1
+##Amount
+
+Hip-Hop has the most sentimental words, then Mental and Other.
+
+Jazz has the least sentimental words, then Indie and Country.
+
+The amount in the affin is close to the bing.
+
+The amount in the nrc is 4-5 times larger than the other two.
+
+##average frequency of sentimental words
 ```{r}
 dt.freq = data.frame(affin = tapply(dt_lyrics$affin.count/dt_lyrics$lyrics.length, dt_lyrics$genre, mean),
 bing = tapply(dt_lyrics$bing.count/dt_lyrics$lyrics.length, dt_lyrics$genre, mean),
@@ -42,29 +57,57 @@ nrc = tapply(dt_lyrics$nrc.count/dt_lyrics$lyrics.length, dt_lyrics$genre, mean)
 dt.freq
 ```
 
-##Frequency2
+##density of frequency
 ```{r, echo = FALSE,warning=FALSE}
 shinyAppDir("../shiny/shiny_frequency",options=list(width="100%"))
 ```
 
-##Length1
+##Frequency
+
+Mental has the highest frequency and is much higher than other genres.
+
+Hip-Hop has the lowest frequency.
+
+The amount in the affin is still close to the bing.
+
+The amount in the nrc is 4-5 times larger than the other two.
+
+##average length
 ```{r}
 dt.length = data.frame(length = tapply(dt_lyrics$lyrics.length, dt_lyrics$genre, mean))
 dt.length
 ```
 
-##Length2
+##density of length
 ```{r, echo = FALSE,warning=FALSE}
 shinyAppDir("../shiny/shiny_length",options=list(width="100%"))
 ```
 
-##mean1
+##average
 ```{r}
 dt.mean = data.frame(affin = tapply(dt_lyrics$affin.count*dt_lyrics$affin.mean, dt_lyrics$genre, sum)/tapply(dt_lyrics$affin.count, dt_lyrics$genre, sum),bing = tapply(dt_lyrics$bing.count*dt_lyrics$bing.mean, dt_lyrics$genre, sum)/tapply(dt_lyrics$bing.count, dt_lyrics$genre, sum))
 dt.mean
 ```
+AFFIN: -5(negative) to 5(positive)
 
-##Mean2
+Bing: 0(negative) and 1(positive)
+
+##
+```{r}
+p = ggplot(dt.mean)
+p + geom_text(aes(x=bing,y=affin,label=rownames(dt.mean))) + geom_smooth(method = "lm",aes(x=bing,y=affin),se = FALSE)+ggtitle("relation between average attitude in affin and bing")
+```
+x-intercept is arounf 0.44, not 0.5
+
+##average of each song
 ```{r, echo = FALSE,warning=FALSE}
 shinyAppDir("../shiny/shiny_mean",options=list(width="100%"))
 ```
+
+##summary
+
+Hip-Hop: longest lyrics, lowest frequency, largest amount, most negative
+
+Jazz: samllest amount, most positive
+
+affin and bing are similar in amount analysis, but different in attitude.
